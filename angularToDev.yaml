@@ -1,0 +1,52 @@
+pool:
+  name: Azure Pipelines
+steps:
+- task: NodeTool@0
+  displayName: 'Use Node 12.x'
+  inputs:
+    versionSpec: 12.x
+    checkLatest: true
+
+- task: Npm@1
+  displayName: 'Install Angular CLI'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'install -g @angular/cli'
+
+- task: Npm@1
+  displayName: 'Install Ionic CLI'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'install -g @ionic/cli'
+
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    verbose: false
+
+- task: Npm@1
+  displayName: 'npm run web'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run web'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)/www'
+
+- task: FtpUpload@2
+  displayName: 'FTP Upload: to Web App (Node)'
+  inputs:
+    credentialsOption: inputs
+    serverUrl: '<serverUrl>'
+    username: '<username>'
+    password: <password>
+    rootDirectory: '$(System.DefaultWorkingDirectory)/www'
+    remoteDirectory: /site/wwwroot/dist
+    clean: true
+    trustSSL: true
+
