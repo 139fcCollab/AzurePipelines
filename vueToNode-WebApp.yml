@@ -1,0 +1,52 @@
+# Vue to Node Deployment
+# Builds the Vue project and deploys it via FTP to the Web App that is hosting the Node
+# Node automatically serves up anything in the /dist folder
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  displayName: 'Use Node 12.x'
+  inputs:
+    versionSpec: 12.x
+    checkLatest: true
+
+- task: Npm@1
+  displayName: 'Install Vue CLI'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'install -g @vue/cli'
+
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    verbose: false
+
+- task: Npm@1
+  displayName: 'npm run build'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run build'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)/dist'
+
+- task: FtpUpload@2
+  displayName: 'FTP Upload: to Web App (Node)'
+  inputs:
+    credentialsOption: inputs
+    serverUrl: '<serverName>'
+    username: '<username>'
+    password: <password>
+    rootDirectory: '$(System.DefaultWorkingDirectory)/dist'
+    remoteDirectory: /site/wwwroot/dist
+    clean: true
+    trustSSL: true
