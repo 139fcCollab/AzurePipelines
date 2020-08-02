@@ -48,5 +48,6 @@ steps:
     rootDirectory: '$(System.DefaultWorkingDirectory)/www'
     remoteDirectory: /site/wwwroot/dist
     clean: true
+    preservePaths: true
     trustSSL: true
 
