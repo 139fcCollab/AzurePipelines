@@ -49,4 +49,5 @@ steps:
     rootDirectory: '$(System.DefaultWorkingDirectory)/dist'
     remoteDirectory: /site/wwwroot/dist
     clean: true
+    preservePaths: true
     trustSSL: true
